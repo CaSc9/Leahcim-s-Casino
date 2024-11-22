@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Welcome to Poker Online
+{% endblock %}
+
+{% block content %}
+    <div class="hero">
+        <div class="hero-text">
+            <h1>Welcome to Leahcim's Online Casino</h1>
+            <p>Experience the thrill of poker, anytime, anywhere. Join our community of players and enjoy exciting tournaments and games!</p>
+            <div class="cta-buttons">
+                <a href="{{ url_for('register') }}" class="button">Sign Up</a>
+                <a href="{{ url_for('login') }}" class="button button-secondary">Login</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <img src="{{ url_for('static', filename='img/poker-table.png') }}" alt="Poker Table" />
+        </div>
+    </div>
+    <div class="features">
+        <h2>Why Choose Poker Online?</h2>
+        <div class="feature-item">
+            <img src="{{ url_for('static', filename='img/cards.png') }}" alt="Cards" />
+            <h3>Authentic Gameplay</h3>
+            <p>Play with realistic rules and professional-grade visuals.</p>
+        </div>
+        <div class="feature-item">
+            <img src="{{ url_for('static', filename='img/trophy.png') }}" alt="Trophy" />
+            <h3>Exciting Tournaments</h3>
+            <p>Compete in high-stakes games and win big rewards!</p>
+        </div>
+        <div class="feature-item">
+            <img src="{{ url_for('static', filename='img/community.png') }}" alt="Community" />
+            <h3>Join a Community</h3>
+            <p>Connect with poker enthusiasts from around the globe.</p>
+        </div>
+    </div>
+{% endblock %}
