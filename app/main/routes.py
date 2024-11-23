@@ -1,4 +1,4 @@
-from flask import render_template, url_for
+from flask import render_template
 from . import main_bp
 
 
@@ -9,14 +9,10 @@ def index():  # put poker_application's code here
 
 @main_bp.route('/login', methods=['GET', 'POST'])
 def login():  # put poker_application's code here
-    return render_template('templates/login.html')
+    return render_template('login.html')
 
 
 @main_bp.route('/register', methods=['GET', 'POST'])
 def register():  # put main_application's code here
-    return render_template('templates/register.html')
+    return render_template('register.html')
 
-
-@main_bp.route('/game', methods=['GET', 'POST'])
-def game():
-    return render_template('templates/game.html')

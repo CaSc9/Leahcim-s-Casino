@@ -12,7 +12,7 @@ def create_app():
     app.debug = True
 
     from app.main import main_bp
-    app.register_blueprint(main_bp, url_prefix='/welcome/')
+    app.register_blueprint(main_bp, url_prefix='/')
 
     socketio.init_app(app)
     return app
