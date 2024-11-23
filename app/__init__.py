@@ -14,6 +14,15 @@ def create_app():
     from app.main import main_bp
     app.register_blueprint(main_bp, url_prefix='/')
 
+    from app.poker import poker_bp
+    app.register_blueprint(main_bp, url_prefix='/')
+
+    from app.blackjack import blackjack_bp
+    app.register_blueprint(main_bp, url_prefix='/')
+
+    from app.roulette import roulette_bp
+    app.register_blueprint(main_bp, url_prefix='/')
+
     socketio.init_app(app)
     return app
 
