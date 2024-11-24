@@ -1,6 +1,6 @@
 def parse_letters(hand):
     parsing_m = {"J": 11, "Q": 12, "K": 13, "A": 14}
-    value = card[0]
+    value = ''  # add logic later
     print(value)
     if value is str:
         return parsing_m[value]
