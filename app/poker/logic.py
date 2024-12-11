@@ -3,7 +3,8 @@ import random as rd
 
 ###
 players = 4
-startmoney = 200
+money = 1000
+bet = 0
 Hands = []
 pAtt = []
 
@@ -15,8 +16,12 @@ deck = [suitC, suitS, suitD, suitH]
 EdiDeck = deck
 
 blinds = []
+bigblind = 400
+smallblind = int(bigblind/2)
 
 DealerCards = []
+
+ww = tk.Tk()
 ###
 
 # note für deck:
@@ -42,13 +47,12 @@ def create_deck():
         f.append(["A", shape])
 
     print(deck)
-
-for i in range(players):
-    pAtt.append([])
-    pAtt[i] = ["call", startmoney]
-print(pAtt)
+def player_Attributes(players, money, bet, myturn):
+    for i in range(players):
+        pAtt.append([])
+        pAtt[i] = ["-", money, bet, myturn]
+    print(pAtt)
 ###
-ww = tk.Tk()
 
 #1 Hände verteilen
 
@@ -64,6 +68,8 @@ def deal_hands(players):
             every.append(EdiDeck[rand_suit][rand_card])
             EdiDeck[rand_suit].pop(rand_card)
         print(every)
+
+def dealer_cards():
     for i in range(5):
         rand_suit = rd.randint(0, 3)
         rand_card = rd.randint(0, len(EdiDeck) - 1)
@@ -72,33 +78,47 @@ def deal_hands(players):
         EdiDeck[rand_suit].pop(rand_card)
 
     print(DealerCards)
-    print(EdiDeck)
 
 # blinds
 # 2 setzen gross/klein Blind
-def blind(players, strtVal):
+def blind(players, big, small):
     for f in range(players):
         blinds.append([])
 
     ct = 0
     for every in blinds:
         if ct == 0:
-            blinds[ct] = ["big", True, strtVal]
+            blinds[ct] = ["big", True, big]
         if ct == 1:
-            blinds[ct] = ["small", True, int(strtVal/2)]
+            blinds[ct] = ["small", True, small]
         elif ct >= 2:
             blinds[ct] = ["", False, 0]
         ct += 1
     print(blinds)
 
-# 3 player attributes:
-# fold/call/raise, money
+def call(player):
+    while player[3] == True:
+        print("Hello")
 
-
-
-
+### 1. Round ###
+print("########## ROUND 1 ###########")
 create_deck()
-deal_hands(4)
-blind(4, 400)
-ww.mainloop()
+player_Attributes(players, money, bet, False)
 
+deal_hands(players)
+dealer_cards()
+
+blind(players, bigblind, smallblind)
+
+#bigblind player 1
+pAtt[0][1] = money - bigblind
+print(pAtt[0])
+
+#smallblind player 2
+pAtt[1][1] = money - smallblind
+print(pAtt[1])
+
+#call player 3
+pAtt[2][3] = True
+call(pAtt[2])
+ww.mainloop()
