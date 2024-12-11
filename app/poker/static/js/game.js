@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-console.log(THREE);
+
 export function createScene() {
     const gameWindow = document.getElementById('render-target');
     const scene = new THREE.Scene();

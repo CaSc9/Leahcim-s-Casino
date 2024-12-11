@@ -26,4 +26,5 @@ def create_app():
     app.register_blueprint(roulette_bp, url_prefix='/roulette')
 
     socketio.init_app(app)
+
     return app

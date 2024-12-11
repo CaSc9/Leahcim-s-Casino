@@ -17,19 +17,19 @@
 
 {% block content %}
     <h1>Play Poker</h1>
-    <canvas id="pokerCanvas" width="800" height="600"></canvas>
+    <canvas id="render-target" width="800" height="600"></canvas>
 
 
 
     <script type="module">
-    import {createScene}   from "{{ url_for('poker.static', filename='js/game.js') }}"
+    import {createScene} from "{{ url_for('poker.static', filename='js/game.js') }}"
     window.onload = ()=>{
-        window.scene = createScene;
-        console.log(window.scene.start)
+        window.scene = createScene();
         window.scene.start();
     }
     </script>
     <script>
+    console.log(screen.orientation.lock)
     if (screen.orientation && screen.orientation.lock) {
         screen.orientation.lock('portrait').catch(function(error){
             console.error('Orientation lock failed:', error);
