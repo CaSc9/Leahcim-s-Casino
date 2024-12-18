@@ -18,6 +18,7 @@ EdiDeck = deck
 blinds = []
 bigblind = 400
 smallblind = int(bigblind/2)
+table_bet = 0
 
 DealerCards = []
 
@@ -50,7 +51,7 @@ def create_deck():
 def player_Attributes(players, money, bet, myturn):
     for i in range(players):
         pAtt.append([])
-        pAtt[i] = ["-", money, bet, myturn]
+        pAtt[i] = [i+1, "-", money, bet, myturn]
     print(pAtt)
 ###
 
@@ -97,10 +98,22 @@ def blind(players, big, small):
     print(blinds)
 
 def call(player):
-    while player[3] == True:
-        print("Hello")
+    cur_money = player[2]
+    if player[1] == "call" and player[4] == True:
+        player[2] = cur_money - table_bet
+    print(player)
 
-### 1. Round ###
+def set_bigblind(pAtt):
+    cur_money = pAtt[2]
+    pAtt[2] = cur_money - bigblind
+    print(pAtt)
+
+def set_smallblind(pAtt):
+    cur_money = pAtt[2]
+    pAtt[2] = cur_money - smallblind
+    print(pAtt)
+
+################ 1. Round ##############################################################################################
 print("########## ROUND 1 ###########")
 create_deck()
 player_Attributes(players, money, bet, False)
@@ -111,14 +124,21 @@ dealer_cards()
 blind(players, bigblind, smallblind)
 
 #bigblind player 1
-pAtt[0][1] = money - bigblind
-print(pAtt[0])
+set_bigblind(pAtt[0])
 
 #smallblind player 2
-pAtt[1][1] = money - smallblind
-print(pAtt[1])
+set_smallblind(pAtt[1])
 
 #call player 3
-pAtt[2][3] = True
-call(pAtt[2])
+for i in range(2,players):
+
+    table_bet = bigblind
+
+    pAtt[i][4] = True
+    pAtt[i][1] = input("call, fold? ")
+    print(pAtt[i])
+    call(pAtt[i])
+
+#
+
 ww.mainloop()
