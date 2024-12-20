@@ -22,6 +22,8 @@ table_bet = 0
 
 DealerCards = []
 
+raised = False
+
 ww = tk.Tk()
 ###
 
@@ -89,19 +91,29 @@ def blind(players, big, small):
     ct = 0
     for every in blinds:
         if ct == 0:
-            blinds[ct] = ["big", True, big]
+            blinds[ct] = [ct+1, "big", True, big]
         if ct == 1:
-            blinds[ct] = ["small", True, small]
+            blinds[ct] = [ct+1, "small", True, small]
         elif ct >= 2:
-            blinds[ct] = ["", False, 0]
+            blinds[ct] = [ct+1, "", False, 0]
         ct += 1
     print(blinds)
 
 def call(player):
     cur_money = player[2]
-    if player[1] == "call" and player[4] == True:
+    if (player[1] == "call" or player[1] == "raise") and player[4] == True:
         player[2] = cur_money - table_bet
     print(player)
+
+def r(player, table_bet):
+    cur_money = player[2]
+    amount = int(input("Amount? "))
+    if amount <= cur_money:
+        if player[1] == "raise" and player[4] == True:
+            player[2] = cur_money - amount
+            table_bet += amount
+        print(player)
+    return table_bet
 
 def set_bigblind(pAtt):
     cur_money = pAtt[2]
@@ -129,16 +141,31 @@ set_bigblind(pAtt[0])
 #smallblind player 2
 set_smallblind(pAtt[1])
 
-#call player 3
+#call players 3,4
 for i in range(2,players):
 
     table_bet = bigblind
 
     pAtt[i][4] = True
-    pAtt[i][1] = input("call, fold? ")
+    pAtt[i][1] = input("call, fold, raise? ")
     print(pAtt[i])
-    call(pAtt[i])
+    if pAtt[i][1] == "call":
+        call(pAtt[i])
+    if pAtt[i][1] == "raise":
+        raised = True
+        call(pAtt[i])
+        table_bet += int(r(pAtt[i], table_bet))
 
-#
+# call player 2 to full amount
+pAtt[1][1] = input("call, fold, raise? ")
+if pAtt[1][1] == "call":
+    set_smallblind(pAtt[i])
+if pAtt[1][1] == "raise":
+    raised = True
+    set_smallblind(pAtt[i])
+    table_bet += int(r(pAtt[i], table_bet))
+
+print(table_bet)
+
 
 ww.mainloop()
