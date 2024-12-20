@@ -16,10 +16,8 @@ for _ in range(4):
             card = [value, sign]
             deck.append(card)
 
-def shuffle():
-    random.shuffle(deck)
+random.shuffle(deck)
 
-shuffle()
 
 def deal(hand, number):
     for _ in range(number):
@@ -53,12 +51,21 @@ def round():
     print(f"Dealer hat: {deal(dealers_hand, 1)},    X")
     print(f"Du hast: {deal(my_hand, 2)}\nTotal: {total(my_hand)}")
     hit_or_stand = "1"
+    double = input("Double: 1   No double: 2")
     while playerIn and dealerIn:
         if total(my_hand) == 21:
             print("Blackjack! Du hast gewonnen! ")
             konto += 2 * bet
             break
-        hit_or_stand = input("Hit: 1      Stand: 2\n")
+        if double == "1":
+            deal(my_hand, 1)
+            print(f"Du hast: {my_hand}\nTotal: {total(my_hand)}")
+            if total(my_hand) > 21:
+                print("Bust! Du hast verloren!")
+                break
+            hit_or_stand = "2"
+        elif double != "1":
+            hit_or_stand = input("Hit: 1      Stand: 2\n")
         while hit_or_stand == "1":
             deal(my_hand, 1)
             print(f"Du hast: {my_hand}\nTotal: {total(my_hand)}")
@@ -88,8 +95,6 @@ def round():
                 print("Du hast verloren!")
             break
         return konto
-
-
 
 
 konto = 1000
