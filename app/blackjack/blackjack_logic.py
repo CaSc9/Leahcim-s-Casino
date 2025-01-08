@@ -16,10 +16,7 @@ for _ in range(4):
             card = [value, sign]
             deck.append(card)
 
-def shuffle():
-    random.shuffle(deck)
-
-shuffle()
+random.shuffle(deck)
 
 def deal(hand, number):
     for _ in range(number):
@@ -45,23 +42,52 @@ def total(hand):
 
 
 def round():
-    global konto
+    global konto, double, bet
     playerIn = True
     dealerIn = True
     my_hand = []
     dealers_hand = []
     print(f"Dealer hat: {deal(dealers_hand, 1)},    X")
-    print(f"Du hast: {deal(my_hand, 2)}\nTotal: {total(my_hand)}")
+    #print(f"Du hast: {deal(my_hand, 2)}\nTotal: {total(my_hand)}")
+    my_hand = [[5, "Hearts"], [5, "Spades"]]
+    total(my_hand)
+    print(my_hand)
     hit_or_stand = "1"
-    double = input("Double: 1   No double: 2")
+    if my_hand[0][0] == my_hand[1][0]:
+        split = input("Split hand? (Yes = 1, No = 2)\n")
+        if split == "1":
+            new_hand = [my_hand.pop(0)]
+            while playerIn and dealerIn:
+                if total(new_hand) == 21:
+                    print("Blackjack! Du hast gewonnen!")
+                    konto += 2 * bet
+                    break
+                while hit_or_stand == "1":
+                    deal(new_hand, 1)
+                    print(f"Du hast: {new_hand}\nTotal: {total(new_hand)}")
+                    if total(new_hand) > 21:
+                        print("Bust! Du hast verloren!")
+                        break
+                    hit_or_stand = input("Hit: 1      Stand: 2\n")
+                if total(new_hand) > 21:
+                    break
+                elif hit_or_stand == "2":
+                    hit_or_stand = "1"
+                    break
+            print(new_hand)
+    if total(my_hand) != 21 and split != "1":
+        double = input("Double: 1   No double: 2\n")
+    else:
+        double = "2"
     while playerIn and dealerIn:
         if total(my_hand) == 21:
-            print("Blackjack! Du hast gewonnen! ")
+            print("Blackjack! Du hast gewonnen!")
             konto += 2 * bet
             break
-        if double == "1":
+        if double == "1" and split != "1":
+            konto -= bet
+            bet *= 2
             deal(my_hand, 1)
-            print(f"Du hast: {my_hand}\nTotal: {total(my_hand)}")
             if total(my_hand) > 21:
                 print("Bust! Du hast verloren!")
                 break
