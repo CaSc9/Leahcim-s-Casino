@@ -1,41 +1,70 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leahcim's Poker</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('poker.static', filename='css/style.css') }}">
 
-{% block title %}
-    Poker Game
-{% endblock %}
-
-{% block links %}
-<script type="importmap">
-  {
-    "imports": {
-      "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
-      "three/addons/": "https://cdn.jsdelivr.net/npm/three/examples/jsm/"
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three/examples/jsm/"
+        }
     }
-  }
-</script>
-{% endblock %}
+    </script>
+</head>
+<body>
+    <!-- General top right menu -->
+    <div class="menu">
+        <button class="menu-toggle">☰</button>
+        <div class="menu-content">
+            <a href="{{ url_for('main.index') }}">Leave</a>
+            <a href="{{ url_for('main.index') }}">Home</a>
+            <a href="{{ url_for('main.index') }}">Profile</a>
+        </div>
+    </div>
+    <!-- Game Window (including action buttons) -->
+    <div class="game-container">
+        <canvas id="render-target"></canvas>
+         <div class="action-buttons">
+            <button id="fold-btn" class="action-button">Fold</button>
+            <button id="call-btn" class="action-button">Call</button>
+            <button id="raise-btn" class="action-button">Raise</button>
+        </div>
 
-{% block content %}
-    <h1>Play Poker</h1>
-    <canvas id="render-target" width="800" height="600"></canvas>
+        <!-- Raise Slider (Hidden by default) -->
+        <div id="raise-slider-container" class="raise-slider">
+            <input type="range" id="raise-slider" min="1" max="100" value="50" >
+            <span id="raise-value">50</span>
+        </div>
+    </div>
 
+        <!-- Lay-Overs -->
+    <div class="rotate-overlay">
+        <img src="{{ url_for('poker.static', filename='img/screen-rotate.png') }}" alt="Rotate your device" class="rotate-icon" />
+        <p> Rotate your device!</p>
+    </div>
 
+    <div id="loading-container">
+        <div id="loading-bar-wrapper">
+            <div id="loading-bar"></div>
+        </div>
+        <div id="loading-text">Loading...</div>
+    </div>
 
     <script type="module">
-    import {createScene} from "{{ url_for('poker.static', filename='js/game.js') }}"
-    window.onload = ()=>{
-        window.scene = createScene();
+    import {Scene} from "{{ url_for('poker.static', filename='js/game.js') }}"
+    window.onload = async function(){
+        window.scene = new Scene();
+        await window.scene.initialize();
         window.scene.start();
+
     }
     </script>
-    <script>
-    console.log(screen.orientation.lock)
-    if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('portrait').catch(function(error){
-            console.error('Orientation lock failed:', error);
-        });
-    } else {
-        console.warn('Screen orientation lock is not supported on this device.');
-    }
-    </script>
-{% endblock %}
+    <script type="module" src="{{ url_for('poker.static', filename="js/handleInput.js") }}"></script>
+    <script type="module" src="{{ url_for('poker.static', filename="js/objectLoading.js") }}"></script>
+</body>
+</html>

@@ -139,3 +139,17 @@ footer {
     margin-top: 50px;
     text-align: center;
 }
+
+button:disabled {
+        background-color: #ccc;
+        color: #666;
+        cursor: not-allowed;
+    }
+
+button:disabled:hover {
+        background-color: #999999;
+        color: #666;
+        cursor: not-allowed;
+    }
+
+
