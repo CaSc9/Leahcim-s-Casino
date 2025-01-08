@@ -31,12 +31,13 @@ def total(hand):
         if card[0] in buchstaben:
             total += 10
         elif card[0] == "A":
-            if total >= 11:
-                total += 1
-            else:
-                total += 11
+            total += 11
         else:
             total += card[0]
+        if total > 21:
+            for card in hand:
+                if card[0] == "A":
+                    total -= 10
     return total
 
 
@@ -49,7 +50,8 @@ def round():
     dealers_hand = []
     split = "2"
     print(f"Dealer hat: {deal(dealers_hand, 1)},    X")
-    print(f"Du hast: {deal(my_hand, 2)}\nTotal: {total(my_hand)}")
+    #print(f"Du hast: {deal(my_hand, 2)}\nTotal: {total(my_hand)}")
+    my_hand = [[9, "Spades"], ["A", "Diamonds"]]
     hit_or_stand = "1"
     if my_hand[0][0] == my_hand[1][0]:
         split = input("Split hand? (Yes = 1, No = 2)\n")
@@ -140,18 +142,24 @@ def round():
 konto = 1000
 
 while bet != "q":
-    print(f"Kontostand: {konto}")
-    bet = input("Bet:     (quit: q)\n")
-    if bet == "q":
-        print(f"\nProfit: {konto - 1000}")
-        break
-    elif int(bet) > konto:
-        print("Zu wenig Geld auf Konto.")
+    try:
+        print(f"Kontostand: {konto}")
+        bet = input("Bet:     (quit: q)\n")
+        if bet == "q":
+            print(f"\nProfit: {konto - 1000}")
+            break
+        elif int(bet) > konto:
+            print("Zu wenig Geld auf Konto.")
+            continue
+        bet = int(bet)
+    except ValueError:
         continue
-    bet = int(bet)
     konto -= bet
     print(f"Kontostand: {konto}\n")
     round()
     if konto <= 0:
         print("Kontostand: 0 \nDu bist pleite!")
         break
+    if len(deck) < 30:
+        #Animation
+        random.shuffle(deck)
