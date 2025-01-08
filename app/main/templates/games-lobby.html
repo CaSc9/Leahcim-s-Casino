@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Selection</title>
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/game-pre.css') }}">
+</head>
+<body>
+    <div class="game-selection">
+        <h1>Choose Your Game</h1>
+        <div class="game-cards">
+            <div class="game-card">
+                <img src="{{ url_for('main.static', filename='img/roulette.png') }}" alt="Roulette" class="game-image">
+                <div class="game-info">
+                    <h2>Roulette</h2>
+                    <p>Try your luck with the spinning wheel!</p>
+                    <a href="{{ url_for('main.lobby', game = "roulette")}}" class="game-button">Play Now</a>
+                </div>
+            </div>
+            <div class="game-card">
+                <img src="{{ url_for('main.static', filename='img/poker.png') }}" alt="Poker" class="game-image">
+                <div class="game-info">
+                    <h2>Poker</h2>
+                    <p>Bluff your way to victory!</p>
+                    <a href="{{ url_for('main.lobby', game="poker")}}" class="game-button">Play Now</a>
+                </div>
+            </div>
+            <div class="game-card">
+                <img src="{{ url_for('main.static', filename='img/blackjack.png') }}" alt="Blackjack" class="game-image">
+                <div class="game-info">
+                    <h2>Blackjack</h2>
+                    <p>Get as close to 21 as you can!</p>
+                    <a href="{{ url_for('main.lobby', game= "blackjack")}}" class="game-button">Play Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

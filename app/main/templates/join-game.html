@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Game</title>
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/game-pre.css') }}">
+</head>
+<body>
+    <div class="join-game">
+        <h1>Join a Game</h1>
+        <form>
+            <label for="game-code">Game Code:</label>
+            <input type="text" id="game-code" placeholder="Enter Game Code">
+
+            <label for="pin">Lobby PIN:</label>
+            <input type="password" id="pin" placeholder="Enter Lobby PIN">
+
+            <button type="submit">Join Game</button>
+        </form>
+        <div class="create-game-link">
+            <p>Don't have a game code?</p>
+            <a href="{{ url_for('main.create') + '?game='}}{{ game }}" class="create-button">Create a New Game</a>
+        </div>
+    </div>
+</body>
+</html>

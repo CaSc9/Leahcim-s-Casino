@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Game</title>
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('main.static', filename='css/game-pre.css') }}">
+</head>
+<body>
+    <div class="create-game">
+        <h1>Create a New Game</h1>
+        <p>Your Game Code: <strong id="game-code">ABCD1234</strong></p>
+        <form>
+            <label for="pin">Lobby PIN:</label>
+            <input type="password" id="pin" placeholder="Enter a 4-digit PIN">
+
+            <label for="limit">Limit:</label>
+            <input type="number" id="limit" placeholder="Enter game limit">
+
+            <label for="big-blind">Big Blind:</label>
+            <input type="number" id="big-blind" placeholder="Enter big blind value">
+
+            <button type="submit">Create Game</button>
+        </form>
+    </div>
+</body>
+</html>
