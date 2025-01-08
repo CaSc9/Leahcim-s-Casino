@@ -14,13 +14,19 @@ suitD = []
 suitH = []
 deck = [suitC, suitS, suitD, suitH]
 EdiDeck = deck
+DealerCards = []
 
 blinds = []
 bigblind = 400
 smallblind = int(bigblind/2)
 table_bet = 0
 
-DealerCards = []
+raised = False
+called = []
+all_called = False
+
+round1 = False
+round2 = False
 
 ww = tk.Tk()
 ###
@@ -57,6 +63,10 @@ def player_Attributes(players, money, bet, myturn):
 
 #1 Hände verteilen
 
+def action_prompt(PlayerNr):
+    prompt = "".join(["player ",str(PlayerNr),": call, fold, raise? "])
+    return prompt
+
 
 def deal_hands(players):
     for f in range(players):
@@ -89,19 +99,44 @@ def blind(players, big, small):
     ct = 0
     for every in blinds:
         if ct == 0:
-            blinds[ct] = ["big", True, big]
+            blinds[ct] = [ct+1, "big", True, big]
         if ct == 1:
-            blinds[ct] = ["small", True, small]
+            blinds[ct] = [ct+1, "small", True, small]
         elif ct >= 2:
-            blinds[ct] = ["", False, 0]
+            blinds[ct] = [ct+1, "", False, 0]
         ct += 1
     print(blinds)
 
 def call(player):
     cur_money = player[2]
-    if player[1] == "call" and player[4] == True:
+    if (player[1] == "call" or player[1] == "raise") and player[4] == True and table_bet <= cur_money:
         player[2] = cur_money - table_bet
     print(player)
+
+def r(player):
+    cur_money = player[2]
+    amount = int(input("Amount? "))
+    amount_check = False
+    while amount_check == False :
+        if amount <= cur_money:
+            if player[1] == "raise" and player[4] == True:
+                player[2] = cur_money - amount
+            amount_check = True
+            print(player)
+            return amount
+        else:
+            print("Not possible. Not enough money.")
+            amount = int(input("Try again: Amount? "))
+
+def raise_(player, table_bet):
+    call(player)
+    table_bet += int(r(player))
+
+def fold(player):
+    Hands[int((player[0])-1)] = [[0, '-'], [0, '-']]
+    print(player)
+    print(Hands)
+    print("Folded, please wait for next round.")
 
 def set_bigblind(pAtt):
     cur_money = pAtt[2]
@@ -118,6 +153,7 @@ print("########## ROUND 1 ###########")
 create_deck()
 player_Attributes(players, money, bet, False)
 
+round1 = True
 deal_hands(players)
 dealer_cards()
 
@@ -129,16 +165,59 @@ set_bigblind(pAtt[0])
 #smallblind player 2
 set_smallblind(pAtt[1])
 
-#call player 3
-for i in range(2,players):
 
-    table_bet = bigblind
+table_bet = bigblind
 
-    pAtt[i][4] = True
-    pAtt[i][1] = input("call, fold? ")
+for i in range(players-1):
+    called.append([])
+
+# call to full amount player 2
+pAtt[1][4] = True
+pAtt[1][1] = input("player 2: call, fold, raise? ")
+print(pAtt[1])
+if pAtt[1][1] == "call":
+    set_smallblind(pAtt[1])
+    called[0] = 1
+elif pAtt[1][1] == "fold":
+    fold(pAtt[1])
+elif pAtt[1][1] == "raise":
+    raised = True
+    set_smallblind(pAtt[1])
+    table_bet += int(r(pAtt[1]))
+pAtt[1][4] = False
+
+print(called)
+
+while round1 == True:
+    while raised == False and all_called == False:
+        #call players 3,4
+        for i in range(2,players):
+            pAtt[i][4] = True
+            if raised == False and pAtt[i][4] == True:
+                pAtt[i][1] = input(action_prompt(i+1))
+                print(pAtt[i])
+                if pAtt[i][1] == "call":
+                    call(pAtt[i])
+                    called[i-1] = 1
+                    print(called)
+                elif pAtt[i][1] == "fold":
+                    fold(pAtt[i])
+                    called[i - 1] = 1
+                    print(called)
+                if pAtt[i][1] == "raise":
+                    raised = True
+                    raise_(pAtt[i], table_bet)
+            pAtt[i][4] = False
+            all_called = all(element == 1 for element in called)
+            if all_called == True:
+                round1 = False
+        raised = False
+
+
+
+print(table_bet)
+for i in range(4):
     print(pAtt[i])
-    call(pAtt[i])
 
-#
 
 ww.mainloop()
