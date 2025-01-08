@@ -22,6 +22,8 @@ smallblind = int(bigblind/2)
 table_bet = 0
 
 raised = False
+called = []
+all_called = False
 
 round1 = False
 round2 = False
@@ -166,12 +168,16 @@ set_smallblind(pAtt[1])
 
 table_bet = bigblind
 
+for i in range(players-1):
+    called.append([])
+
 # call to full amount player 2
 pAtt[1][4] = True
 pAtt[1][1] = input("player 2: call, fold, raise? ")
 print(pAtt[1])
 if pAtt[1][1] == "call":
     set_smallblind(pAtt[1])
+    called[0] = 1
 elif pAtt[1][1] == "fold":
     fold(pAtt[1])
 elif pAtt[1][1] == "raise":
@@ -180,23 +186,33 @@ elif pAtt[1][1] == "raise":
     table_bet += int(r(pAtt[1]))
 pAtt[1][4] = False
 
-while raised == False:
-    #call players 3,4
-    for i in range(2,players):
-        pAtt[i][4] = True
-        if raised == False and pAtt[i][4] == True:
-            pAtt[i][1] = input(action_prompt(i+1))
-            print(pAtt[i])
-            if pAtt[i][1] == "call":
-                call(pAtt[i])
-            elif pAtt[i][1] == "fold":
-                fold(pAtt[1])
-            if pAtt[i][1] == "raise":
-                raised = True
-                raise_(pAtt[i], table_bet)
-        pAtt[i][4] = False
+print(called)
 
-    # what happens when raised == True?
+while round1 == True:
+    while raised == False and all_called == False:
+        #call players 3,4
+        for i in range(2,players):
+            pAtt[i][4] = True
+            if raised == False and pAtt[i][4] == True:
+                pAtt[i][1] = input(action_prompt(i+1))
+                print(pAtt[i])
+                if pAtt[i][1] == "call":
+                    call(pAtt[i])
+                    called[i-1] = 1
+                    print(called)
+                elif pAtt[i][1] == "fold":
+                    fold(pAtt[i])
+                    called[i - 1] = 1
+                    print(called)
+                if pAtt[i][1] == "raise":
+                    raised = True
+                    raise_(pAtt[i], table_bet)
+            pAtt[i][4] = False
+            all_called = all(element == 1 for element in called)
+            if all_called == True:
+                round1 = False
+        raised = False
+
 
 
 print(table_bet)
