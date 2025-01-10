@@ -4,7 +4,19 @@
     Login
 {% endblock %}
 
+
 {% block content %}
+   <div style="text-align:center;">
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div style="background-color: #f8d7da;color: #721c24;border: 1px solid #f5c6cb; padding: 10px 5px">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+    {% endwith %}
+   </div>
+
+
     <h1>Login</h1>
     <form action="/login" method="post">
         <label for="username">Username:</label>

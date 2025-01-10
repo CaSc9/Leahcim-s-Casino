@@ -9,14 +9,24 @@
 </head>
 <body>
     <div class="join-game">
+        <div style="text-align:center;">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div style="background-color: #f8d7da;color: #721c24;border: 1px solid #f5c6cb; padding: 10px 5px">
+                    {{ messages[0] }}
+                </div>
+            {% endif %}
+        {% endwith %}
+       </div>
+
         <h1>Join a Game</h1>
-        <form>
+        <form method="post" action="/join">
             <label for="game-code">Game Code:</label>
-            <input type="text" id="game-code" placeholder="Enter Game Code">
+            <input type="text" name="game-code" value="{{ code }}" placeholder="Enter Game Code" required>
 
             <label for="pin">Lobby PIN:</label>
-            <input type="password" id="pin" placeholder="Enter Lobby PIN">
-
+            <input type="password" name="pin" value="{{ pin }}" placeholder="Enter Lobby PIN" required>
+            <input type="hidden" name="game-typ" value="{{ game }}">
             <button type="submit">Join Game</button>
         </form>
         <div class="create-game-link">

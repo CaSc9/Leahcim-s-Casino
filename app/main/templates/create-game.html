@@ -8,21 +8,50 @@
     <link rel="stylesheet" href="{{ url_for('main.static', filename='css/game-pre.css') }}">
 </head>
 <body>
-    <div class="create-game">
+    <div class="create-game" >
         <h1>Create a New Game</h1>
-        <p>Your Game Code: <strong id="game-code">ABCD1234</strong></p>
-        <form>
-            <label for="pin">Lobby PIN:</label>
-            <input type="password" id="pin" placeholder="Enter a 4-digit PIN">
+        <form method="post" action="/create">
+            <label for="pin">Lobby Code:</label>
+            <input type="text" id="code" placeholder="{{ game_code }}" readonly>
+    <label for="url">Copy URL:</label>
+            <div>
 
+            <input type="text" id="url" placeholder="{{ url_for('main.join', _external=True, game=game, code=game_code) + "&pin="}}" readonly>
+            <button id="copy" type="button" style="margin-top:0; margin-bottom: 10px; margin-left: 7px" onclick="copyToClipboard()">Copy</button>
+            </div>
+
+            <label for="pin">Lobby PIN:</label>
+            <input type="text" id="pin" placeholder="Enter a 4-digit PIN" pattern="[0-9]{4}" maxlength="4" style="width: 50%; font-size:1.4rem" required>
+
+            {% if game==poker %}
             <label for="limit">Limit:</label>
-            <input type="number" id="limit" placeholder="Enter game limit">
+            <input type="number" id="limit" placeholder="Enter game limit" required>
 
             <label for="big-blind">Big Blind:</label>
-            <input type="number" id="big-blind" placeholder="Enter big blind value">
-
+            <input type="number" id="big-blind" placeholder="Enter big blind value" required>
+            {% endif %}
             <button type="submit">Create Game</button>
         </form>
     </div>
+<script>
+    document.getElementById('pin').addEventListener('input', function(event){
+        document.getElementById('copy').textContent = 'Copy'; document.getElementById('copy').style.padding =""
+        const url = document.getElementById('url')
+        url.placeholder = event.data?url.placeholder + event.data: url.placeholder.slice(0,-1)
+        console.log(url.placeholder)
+    })
+
+    function copyToClipboard() {
+    const urlInput = document.getElementById('url');
+    navigator.clipboard.writeText(urlInput.placeholder)
+        .then(function() {
+            document.getElementById('copy').innerHTML = "&check;";  document.getElementById('copy').style.padding ="10px 17px"
+        })
+        .catch(function(error) {
+            alert('Error copying to clipboard: ' + error);
+        });
+}
+
+</script>
 </body>
 </html>

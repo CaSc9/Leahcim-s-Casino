@@ -213,3 +213,8 @@
 .create-button:hover {
     background-color: #2980b9;
 }
+
+
+label{
+    font-weight: bold;
+}
