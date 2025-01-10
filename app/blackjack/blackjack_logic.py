@@ -50,8 +50,7 @@ def round():
     dealers_hand = []
     split = "2"
     print(f"Dealer hat: {deal(dealers_hand, 1)},    X")
-    #print(f"Du hast: {deal(my_hand, 2)}\nTotal: {total(my_hand)}")
-    my_hand = [[9, "Spades"], ["A", "Diamonds"]]
+    print(f"Du hast: {deal(my_hand, 2)}\nTotal: {total(my_hand)}")
     hit_or_stand = "1"
     if my_hand[0][0] == my_hand[1][0]:
         split = input("Split hand? (Yes = 1, No = 2)\n")
