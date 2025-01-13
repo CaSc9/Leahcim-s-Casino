@@ -36,6 +36,7 @@ def register():
         password = request.form['password']
         email = request.form['email']
         if User.query.filter_by(username=username).first():
+            flash('User already exists')
             return redirect(url_for('main.login'))
         else:
             new_user = User(username=username, password=password, email=email)
@@ -63,10 +64,26 @@ def lobby():
 def create():
     if 'user' in session:
         if request.method == 'POST':
-            pass
+            game_code = session['code']
+            session.pop('code')
+            pin = request.form['pin']
+            game_typ = request.form['game-typ']
+            settings = ';'.join([request.form['limit'], request.form['big-blind']])
+            if Game.query.filter_by(game_code=game_code).first():
+                flash('Game already exists')
+                return redirect(url_for('main.join', code=game_code))
+            else:
+                new_game = Game(game_code=game_code, game_type=game_typ, game_pin=pin, game_settings=settings)
+                db.session.add(new_game)
+                new_game.users.append(User.query.filter_by(username=session['user']).first())
+                db.session.commit()
+
+                return redirect(url_for('poker.game', game_code=game_code))
+
         else:
             game = request.args.get('game')
-            code = uuid.uuid4().hex[:25]
+            code = uuid.uuid4().hex[:24]
+            session['code'] = code
             return render_template('create-game.html', game=game, game_code=code)
     else:
         return redirect(url_for('main.login'))
@@ -80,10 +97,11 @@ def join():
             game_pin = request.form['pin']
             game_type = request.form['game-typ']
             game = Game.query.filter_by(game_code=game_code).first()
-            if game and game.pin == game_pin:
-                User.query.filter_by(username=session['user']).first().game_id = game.id
+            if game and game.game_pin == game_pin:
+                game.users.append(User.query.filter_by(username=session['user']).first())
+                db.session.commit()
                 if game_type == 'poker':
-                    return redirect(url_for('poker.game'))
+                    return redirect(url_for('poker.game', game_code=game_code))
                 # More Game Pages redirects
             else:
                 flash('Invalid game code or pin')

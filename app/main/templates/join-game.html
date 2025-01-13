@@ -22,10 +22,10 @@
         <h1>Join a Game</h1>
         <form method="post" action="/join">
             <label for="game-code">Game Code:</label>
-            <input type="text" name="game-code" value="{{ code }}" placeholder="Enter Game Code" required>
+            <input type="text" name="game-code" value="{% if code %} {{ code }} {% endif %}" placeholder="Enter Game Code" required>
 
             <label for="pin">Lobby PIN:</label>
-            <input type="password" name="pin" value="{{ pin }}" placeholder="Enter Lobby PIN" required>
+            <input type="password" name="pin" value="{% if pin %}{{ pin }}{% endif %}" placeholder="Enter Lobby PIN" required>
             <input type="hidden" name="game-typ" value="{{ game }}">
             <button type="submit">Join Game</button>
         </form>

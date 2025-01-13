@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: c06e6284326d
+Revision ID: 6cae3099aeba
 Revises: 
-Create Date: 2025-01-10 22:50:14.564937
+Create Date: 2025-01-11 15:06:09.299679
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'c06e6284326d'
+revision = '6cae3099aeba'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,9 @@ def upgrade():
     op.create_table('games',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('game_code', sa.String(length=24), nullable=False),
+    sa.Column('game_pin', sa.String(length=4), nullable=False),
     sa.Column('game_type', sa.String(), nullable=False),
+    sa.Column('game_settings', sa.String(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('game_code')
     )
@@ -30,6 +32,7 @@ def upgrade():
     sa.Column('username', sa.String(), nullable=True),
     sa.Column('email', sa.String(), nullable=False),
     sa.Column('password', sa.String(), nullable=False),
+    sa.Column('balance', sa.Integer(), nullable=False),
     sa.Column('game_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['game_id'], ['games.id'], ),
     sa.PrimaryKeyConstraint('id'),
