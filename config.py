@@ -14,6 +14,7 @@ class ProductionConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    DATABASE_URI = "development.db"
     DEBUG = True
     TESTING = True
     SESSION_COOKIE_SECURE = False
@@ -21,6 +22,7 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
+    DATABASE_URI = 'test.db'
     DEBUG = True
     TESTING = True
     SESSION_COOKIE_SECURE = False
