@@ -20,6 +20,7 @@ blinds = []
 bigblind = 400
 smallblind = int(bigblind/2)
 table_bet = 0
+table_bet_total = 0
 
 checked = []
 all_checked = False
@@ -32,7 +33,8 @@ last_completed_bet = 0
  # make status before a pAtt
 
 set1 = False
-round2 = False
+set2 = False
+set3 = False
 
 ww = tk.Tk()
 ###
@@ -158,6 +160,7 @@ def raise_(player, table_bet, last_completed_bet):
     return table_bet
 
 def fold(player):
+    player[5] = "fold"
     Hands[int((player[0])-1)] = [[0, '-'], [0, '-']]
     print(player)
     print(Hands)
@@ -276,7 +279,7 @@ while set1 == True:
                 pAtt[i][4] = True
                 print(all_checked)
                 if pAtt[i][4] == True and all_checked == False:
-                    if pAtt[i][1] != "raise" and raised == True: #if someone raised and it wasn't this player, he can only raise, call or fold
+                    if pAtt[i][1] != "raise" and pAtt[i][5] != "fold" and raised == True: #if someone raised and it wasn't this player, he can only raise, call or fold
                         print("\n", Hands[i])
                         pAtt[i][1] = input(action_prompt(i+1))
                         print(pAtt[i])
@@ -313,7 +316,7 @@ while set1 == True:
                             action_reset(pAtt, pAtt[i])
                             print(pAtt)
                             table_bet = raise_(pAtt[i], table_bet, last_completed_bet)
-                    elif pAtt[i][1] != "raise" and raised == False:
+                    elif pAtt[i][1] != "raise" and pAtt[i][5] != "fold" and raised == False:
                         print("\n", Hands[i])
                         pAtt[i][1] = input(action_prompt2(i + 1))
                         print(pAtt[i])
@@ -349,7 +352,198 @@ if all_fold == True:
 
 # show first 3 dealers cards
 for i in range(3):
-    print("\n",DealerCards[i])
+    print("\n",DealerCards[i], "\nCard ",i+1)
+
+
+set2 = True
+table_bet_total += table_bet
+table_bet = 0
+for i in range(len(checked)):
+    if pAtt[i][5] != "fold":
+        checked[i] = []
+print(checked)
+all_checked = False
+blind_call = False
+raised = False
+for every in pAtt:
+    every[3] = 0
+print(pAtt)
+
+while set2 == True:
+    while all_checked == False:
+        if blind_call == False: # edit elif so it makes all players call the raised amount (+be sure that you can't check if you haven't called a raise)
+            #call players 1,2,3,4
+            for i in range(0,players):
+                pAtt[i][4] = True
+                print(all_checked)
+                if pAtt[i][4] == True and all_checked == False:
+                    if pAtt[i][1] != "raise" and pAtt[i][5] != "fold" and raised == True: #if someone raised and it wasn't this player, he can only raise, call or fold
+                        print("\n", Hands[i])
+                        pAtt[i][1] = input(action_prompt(i+1))
+                        print(pAtt[i])
+                        if pAtt[i][1] == "call":
+                            call(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "fold":
+                            fold(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "raise":
+                            raised = True
+                            check_reset(checked)
+                            print(checked)
+                            action_reset(pAtt, pAtt[i])
+                            print(pAtt)
+                            table_bet = raise_(pAtt[i], table_bet, last_completed_bet)
+                    elif pAtt[i][1] == "raise" and raised == True: #if someone raised and that was this player, then he can only raise, fold or check
+                        print("\n", Hands[i])
+                        pAtt[i][1] = input(action_prompt2(i + 1))
+                        print(pAtt[i])
+                        if pAtt[i][1] == "check":
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "fold":
+                            fold(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "raise":
+                            raised = True
+                            check_reset(checked)
+                            print(checked)
+                            action_reset(pAtt, pAtt[i])
+                            print(pAtt)
+                            table_bet = raise_(pAtt[i], table_bet, last_completed_bet)
+                    elif pAtt[i][1] != "raise" and pAtt[i][5] != "fold" and raised == False:
+                        print("\n", Hands[i])
+                        pAtt[i][1] = input(action_prompt2(i + 1))
+                        print(pAtt[i])
+                        if pAtt[i][1] == "check":
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "fold":
+                            fold(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "raise":
+                            raised = True
+                            check_reset(checked)
+                            print(checked)
+                            action_reset(pAtt, pAtt[i])
+                            print(pAtt)
+                            table_bet = raise_(pAtt[i], table_bet, last_completed_bet)
+                pAtt[i][4] = False
+                all_checked = all(element == 1 for element in checked)
+                print(all_checked)
+                if all_checked == True:
+                    set2 = False
+                    raised = False
+
+print(table_bet)
+for i in range(players):
+    print(pAtt[i])
+
+all_fold = all(element[1] == "fold" for element in pAtt)
+if all_fold == True:
+    print("Everyone folded, next round")
+    quit()
+
+print("\n",DealerCards[3], "\nCard 4")
+
+set3 = True
+table_bet_total += table_bet
+table_bet = 0
+print(table_bet_total,"\n",table_bet)
+for i in range(len(checked)):
+    if pAtt[i][5] != "fold":
+        checked[i] = []
+print(checked)
+all_checked = False
+blind_call = False
+raised = False
+for every in pAtt:
+    every[3] = 0
+print(pAtt)
+
+while set3 == True:
+    while all_checked == False:
+        if blind_call == False: # edit elif so it makes all players call the raised amount (+be sure that you can't check if you haven't called a raise)
+            #call players 1,2,3,4
+            for i in range(0,players):
+                pAtt[i][4] = True
+                print(all_checked)
+                if pAtt[i][4] == True and all_checked == False:
+                    if pAtt[i][1] != "raise" and pAtt[i][5] != "fold" and raised == True: #if someone raised and it wasn't this player, he can only raise, call or fold
+                        print("\n", Hands[i])
+                        pAtt[i][1] = input(action_prompt(i+1))
+                        print(pAtt[i])
+                        if pAtt[i][1] == "call":
+                            call(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "fold":
+                            fold(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "raise":
+                            raised = True
+                            check_reset(checked)
+                            print(checked)
+                            action_reset(pAtt, pAtt[i])
+                            print(pAtt)
+                            table_bet = raise_(pAtt[i], table_bet, last_completed_bet)
+                    elif pAtt[i][1] == "raise" and raised == True: #if someone raised and that was this player, then he can only raise, fold or check
+                        print("\n", Hands[i])
+                        pAtt[i][1] = input(action_prompt2(i + 1))
+                        print(pAtt[i])
+                        if pAtt[i][1] == "check":
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "fold":
+                            fold(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "raise":
+                            raised = True
+                            check_reset(checked)
+                            print(checked)
+                            action_reset(pAtt, pAtt[i])
+                            print(pAtt)
+                            table_bet = raise_(pAtt[i], table_bet, last_completed_bet)
+                    elif pAtt[i][1] != "raise" and pAtt[i][5] != "fold" and raised == False:
+                        print("\n", Hands[i])
+                        pAtt[i][1] = input(action_prompt2(i + 1))
+                        print(pAtt[i])
+                        if pAtt[i][1] == "check":
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "fold":
+                            fold(pAtt[i])
+                            checked[i] = 1
+                            print(checked)
+                        elif pAtt[i][1] == "raise":
+                            raised = True
+                            check_reset(checked)
+                            print(checked)
+                            action_reset(pAtt, pAtt[i])
+                            print(pAtt)
+                            table_bet = raise_(pAtt[i], table_bet, last_completed_bet)
+                pAtt[i][4] = False
+                all_checked = all(element == 1 for element in checked)
+                print(all_checked)
+                if all_checked == True:
+                    set3 = False
+                    raised = False
+
+print(table_bet)
+for i in range(players):
+    print(pAtt[i])
+
+all_fold = all(element[1] == "fold" for element in pAtt)
+if all_fold == True:
+    print("Everyone folded, next round")
+    quit()
+
 
 quit()
 
