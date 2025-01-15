@@ -18,7 +18,6 @@ class DevelopmentConfig(Config):
     DEBUG = True
     TESTING = True
     SESSION_COOKIE_SECURE = False
-    HOST = '0.0.0.0'
 
 
 class TestingConfig(Config):

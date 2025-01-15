@@ -78,6 +78,7 @@ def create():
                 new_game.users.append(User.query.filter_by(username=session['user']).first())
                 db.session.commit()
 
+                session['game'] = game_code
                 return redirect(url_for('poker.game', game_code=game_code))
 
         else:
@@ -97,10 +98,14 @@ def join():
             game_pin = request.form['pin']
             game_type = request.form['game-typ']
             game = Game.query.filter_by(game_code=game_code).first()
+            if game.users.count() > 7:
+                flash('Game is full...')
+                return render_template('join.html')
             if game and game.game_pin == game_pin:
                 game.users.append(User.query.filter_by(username=session['user']).first())
                 db.session.commit()
                 if game_type == 'poker':
+                    session['game'] = game_code
                     return redirect(url_for('poker.game', game_code=game_code))
                 # More Game Pages redirects
             else:

@@ -1,6 +1,8 @@
 import * as THREE from 'three';
+import {loadSingle} from "./objectLoading.js";
 
 export class AnimationM {
+    constructor() {this.stage = 'pre-f'}
     async startGameAnimation(numPlayers, animationMixer, cardsParent) {
 
         const cards = cardsParent.children
@@ -45,16 +47,23 @@ export class AnimationM {
 
     }
 
-    distributeRealCards(realCardsAll, cardsInfo, stage){
-        switch (stage) {
+    distributeRealCards(subCards, cardsInfo){
+        switch (this.stage) {
             case "pre-f":
+                this.stage = 'f';
                 //cardsInfo: [playerCard1, PlayerCard2, 3* communityCard]
+                subCards[0].visible = false;
+
+                subCards[1].visible = false;
                 break
             case "f":
+                this.stage = 'turn';
                 break
             case "turn":
+                this.stage = 'river';
                 break
             case "river":
+                this.stage = 'pre-f';
                 break
         }
     }

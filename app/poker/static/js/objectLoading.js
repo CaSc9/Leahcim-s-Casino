@@ -26,6 +26,16 @@ function setupModel(gltf){
         mixer
     }
 }
+export function loadSingle(card){
+    const url = "/poker/static/assets/poker_cards_export/"
+    let cardObject;
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(url + card[1] + "_" + card[0], function (gltf) {
+        cardObject = setupModel(gltf).scene
+    })
+    return cardObject
+
+}
 
 export async function loadObjects() {
     loadingContainer.style.visibility = 'visible';

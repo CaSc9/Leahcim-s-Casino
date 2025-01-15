@@ -10,7 +10,6 @@
     let isTurn = true;
 
     window.addEventListener('toggleTurn', ()=>{
-        console.log('toggleTurn | ' + gameWindow);
         if(isTurn){
             gameWindow.querySelectorAll('button').forEach((button)=>{
                 button.disabled = true;
@@ -32,7 +31,7 @@
     });
 
     raiseBtn.addEventListener('click', handleRaise);
-    // Update Raise Value Display
+
     raiseSlider.addEventListener('input', () => {
         raiseValue.textContent = raiseSlider.value;
     });
