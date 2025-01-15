@@ -177,9 +177,13 @@ def set_smallblind(pAtt):
     print(pAtt)
 
 def check_reset(list):
-    for every in list:
-        if every ==  1:
-            list.remove(every)
+    print(pAtt)
+    print(list)
+    for i in range(len(list)):
+        print(pAtt[i])
+        print(list[i])
+        if list[i] == 1 and pAtt[i][5] != "fold":
+            list.remove(list[i])
             list.append([])
 
 def action_reset(list, this_player):
@@ -189,7 +193,6 @@ def action_reset(list, this_player):
         if every != this_player:
             every[1] = "-"
         print(every)
-
 
 ################ 1. Round ##############################################################################################
 print("########## ROUND 1 ###########")
