@@ -1,4 +1,3 @@
-import tkinter as tk
 import random as rd
 
 ###
@@ -7,6 +6,8 @@ money = 10000
 bet_completed = 0
 Hands = []
 pAtt = []
+
+round_winner = 0
 
 suitC = []
 suitS = []
@@ -30,13 +31,10 @@ blind_call = True
 
 raised = False
 last_completed_bet = 0
- # make status before a pAtt
 
 set1 = False
 set2 = False
 set3 = False
-
-ww = tk.Tk()
 ###
 
 # note für deck:
@@ -120,22 +118,32 @@ def blind(players, big, small):
     print(blinds)
 
 def call(player):
+    global table_bet_total
     cur_money = player[2]
     print(table_bet)
     if (player[1] == "call" or player[1] == "raise") and player[4] == True and table_bet <= cur_money:
         if blind_call == False and player[1] == "raise":
             player[2] = cur_money - player[3]
+            table_bet_total += player[3]
+            print(table_bet_total)
         elif blind_call == False and player[1] != "raise":
             if player[5] == "raise" or player[5] == "call":
                 player[2] = cur_money - (table_bet - player[3])
                 player[3] += table_bet - player[3]
+                table_bet_total += table_bet - player[3]
+                print(table_bet_total)
             elif player[5] != "raise":
                 player[3] = table_bet
                 player[2] = cur_money - table_bet
+                table_bet_total += table_bet
+                print(table_bet_total)
         elif blind_call == True:
             player[3] = table_bet-bigblind
             player[2] = cur_money - table_bet
+            table_bet_total += table_bet
+            print(table_bet_total)
     print(player)
+
 
 def r(player):
     cur_money = player[2]
@@ -167,24 +175,24 @@ def fold(player):
     print("Folded, please wait for next round.")
 
 def set_bigblind(pAtt):
+    global table_bet_total
     cur_money = pAtt[2]
     pAtt[2] = cur_money - bigblind
+    table_bet_total += bigblind
     print(pAtt)
 
 def set_smallblind(pAtt):
+    global table_bet_total
     cur_money = pAtt[2]
     pAtt[2] = cur_money - smallblind
+    table_bet_total += smallblind
     print(pAtt)
 
 def check_reset(list):
-    print(pAtt)
-    print(list)
     for i in range(len(list)):
-        print(pAtt[i])
-        print(list[i])
         if list[i] == 1 and pAtt[i][5] != "fold":
-            list.remove(list[i])
-            list.append([])
+            list[i] = []
+
 
 def action_reset(list, this_player):
     for every in list:
@@ -194,6 +202,29 @@ def action_reset(list, this_player):
             every[1] = "-"
         print(every)
 
+def isitapair(player_hand, dealer_cards):
+    pairtrue = False
+    if player_hand[0][0] == player_hand[1][0]:
+        pairtrue = True
+    elif player_hand[0][0] != player_hand[1][0]:
+        for every in dealer_cards:
+            if every[0] == player_hand[0][0]:
+                pairtrue = True
+            elif every[0] == player_hand[1][0]:
+                pairtrue = True
+            elif dealer_cards.count(every[0]) >= 2:
+                pairtrue = True
+    return pairtrue
+
+def high_card(player_hands, dealer_cards):
+    highest_num = 0
+    for every in player_hands:
+        if every[0] > highest_num:
+            highest_num = every[0]
+    for every in dealer_cards:
+        if every[0] > highest_num:
+            highest_num = every[0]
+    return highest_num
 ################ 1. Round ##############################################################################################
 print("########## ROUND 1 ###########")
 create_deck()
@@ -213,6 +244,7 @@ set_smallblind(pAtt[1])
 
 
 table_bet = bigblind
+print(table_bet, table_bet_total)
 
 for i in range(players):
     checked.append([])
@@ -345,6 +377,7 @@ while set1 == True:
                     raised = False
 
 print(table_bet)
+print(table_bet_total)
 for i in range(players):
     print(pAtt[i])
 
@@ -359,7 +392,6 @@ for i in range(3):
 
 
 set2 = True
-table_bet_total += table_bet
 table_bet = 0
 for i in range(len(checked)):
     if pAtt[i][5] != "fold":
@@ -454,7 +486,6 @@ if all_fold == True:
 print("\n",DealerCards[3], "\nCard 4")
 
 set3 = True
-table_bet_total += table_bet
 table_bet = 0
 print(table_bet_total,"\n",table_bet)
 for i in range(len(checked)):
@@ -539,6 +570,7 @@ while set3 == True:
                     raised = False
 
 print(table_bet)
+print(table_bet_total)
 for i in range(players):
     print(pAtt[i])
 
@@ -547,8 +579,63 @@ if all_fold == True:
     print("Everyone folded, next round")
     quit()
 
+print("\n",DealerCards[4], "\nCard 5")
+
+print(DealerCards)
+print(Hands)
+print("money to win: ", table_bet_total)
+
+# Auswertung der Hände der Spieler: Wegen Zeit nur high card, one pair
+# high card ^= 0, one pair ^= 1
+card_combo = []
+for i in range(players):
+    card_combo.append([])
+
+for every in pAtt:
+    if every[5] != "fold":
+        if isitapair(Hands[every[0]-1], DealerCards) == True:
+            card_combo[every[0]-1] = 1
+        else:
+            card_combo[every[0]-1] = [0,high_card(Hands[every[0]-1], DealerCards)]
+
+print(card_combo)
+
+if card_combo.count(1) == 0:
+    highest = 0
+    for i in range(len(card_combo)):
+        print(i)
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] > highest:
+                highest = card_combo[i][1] #ermittlung welches der höchste wert ist
+    for i in range(len(card_combo)):
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] == highest:
+                round_winner = pAtt[i][0] #ermittlung welchem Spieler dieser höchste wert gehört
+elif card_combo.count(1) == 1:
+    for i in range(len(card_combo)):
+        if card_combo[i] == 1:
+            round_winner = pAtt[i][0]
+elif card_combo.count(1) >= 2:
+    for i in range(len(card_combo)):
+        if card_combo[i] == 1:
+            card_combo[i] = [0,high_card(Hands[i], DealerCards)]
+        elif card_combo[i] != 1:
+            card_combo[i] = []
+    highest = 0
+    print(card_combo)
+    for i in range(len(card_combo)):
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] > highest:
+                highest = card_combo[i][1]
+    for i in range(len(card_combo)):
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] == highest:
+                round_winner = pAtt[i][0]
+
+print(card_combo)
+
+print("This rounds winner is: Player ", round_winner)
+pAtt[round_winner-1][2] += table_bet_total
+print("New balance: ", pAtt[round_winner-1][2])
 
 quit()
-
-
-ww.mainloop()
