@@ -639,3 +639,5 @@ pAtt[round_winner-1][2] += table_bet_total
 print("New balance: ", pAtt[round_winner-1][2])
 
 quit()
+
+# work on looping round 1 or further card combos
