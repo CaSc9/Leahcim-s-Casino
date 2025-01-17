@@ -1,7 +1,7 @@
 import random as rd
 
 ###
-players = 4
+players = 5
 money = 10000
 bet_completed = 0
 Hands = []
@@ -57,9 +57,10 @@ def create_deck():
 
         for i in range(11):
             f[i-1] = [f[i-1], shape]
-        f.append(["A", shape])
+        f.append([13, shape])
 
     print(deck)
+
 def player_Attributes(players, money, bet_completed, myturn):
     for i in range(players):
         pAtt.append([])
@@ -79,15 +80,18 @@ def action_prompt2(PlayerNr):
 
 
 def deal_hands(players):
+    ct = 11
     for f in range(players):
         Hands.append([])
     for every in Hands:
         for i in range(2):
             rand_suit = rd.randint(0, 3)
-            rand_card = rd.randint(0, len(EdiDeck) - 1)
+            rand_card = rd.randint(0, ct)
+            print(rand_card)
 
             every.append(EdiDeck[rand_suit][rand_card])
             EdiDeck[rand_suit].pop(rand_card)
+            ct -= 1
         print(every)
 
 def dealer_cards():
@@ -130,7 +134,7 @@ def call(player):
             if player[5] == "raise" or player[5] == "call":
                 player[2] = cur_money - (table_bet - player[3])
                 player[3] += table_bet - player[3]
-                table_bet_total += table_bet - player[3]
+                table_bet_total += table_bet
                 print(table_bet_total)
             elif player[5] != "raise":
                 player[3] = table_bet
@@ -146,6 +150,7 @@ def call(player):
 
 
 def r(player):
+    global table_bet_total
     cur_money = player[2]
     amount = int(input("Amount? "))
     amount_check = False
@@ -156,6 +161,7 @@ def r(player):
                 player[3] += amount
             amount_check = True
             print(player)
+            table_bet_total += amount
             return amount
         else:
             print("Not possible. Not enough money.")
@@ -216,6 +222,47 @@ def isitapair(player_hand, dealer_cards):
                 pairtrue = True
     return pairtrue
 
+def isitatwopair(player_hand, dealer_cards):
+    ct = 0
+    pairtrue = False
+    if player_hand[0][0] == player_hand[1][0]:
+        pairtrue = True
+        ct += 1
+    elif player_hand[0][0] != player_hand[1][0]:
+        for every in dealer_cards:
+            if every[0] == player_hand[0][0]:
+                pairtrue = True
+                ct += 1
+            elif every[0] == player_hand[1][0]:
+                pairtrue = True
+                ct += 1
+            elif dealer_cards.count(every[0]) >= 2:
+                pairtrue = True
+                ct += 1
+    if pairtrue == True:
+        return ct
+    else:
+        return 0
+
+def threeofakind(player_hand, dealer_cards):
+    threetrue = False
+    if player_hand[0][0] == player_hand[1][0]:
+        for every in dealer_cards:
+            if every[0] == player_hand[0][0]:
+                threetrue = True
+    elif player_hand[0][0] != player_hand[1][0]:
+        for every in dealer_cards:
+            if every[0] == player_hand[0][0] and dealer_cards.count(every[0]) >= 2:
+                threetrue = True
+            elif every[0] == player_hand[1][0] and dealer_cards.count(every[0]) >= 2:
+                threetrue = True
+            elif dealer_cards.count(every[0]) >= 3:
+                threetrue = True
+    return threetrue
+
+
+
+
 def high_card(player_hands, dealer_cards):
     highest_num = 0
     for every in player_hands:
@@ -229,6 +276,9 @@ def high_card(player_hands, dealer_cards):
 print("########## ROUND 1 ###########")
 create_deck()
 player_Attributes(players, money, bet_completed, False)
+
+print(EdiDeck)
+
 
 set1 = True
 deal_hands(players)
@@ -586,7 +636,7 @@ print(Hands)
 print("money to win: ", table_bet_total)
 
 # Auswertung der Hände der Spieler: Wegen Zeit nur high card, one pair
-# high card ^= 0, one pair ^= 1
+# high card ^= 0, one pair ^= 1, two pair ^= 2, three of a kind ^= 3
 card_combo = []
 for i in range(players):
     card_combo.append([])
@@ -594,13 +644,18 @@ for i in range(players):
 for every in pAtt:
     if every[5] != "fold":
         if isitapair(Hands[every[0]-1], DealerCards) == True:
-            card_combo[every[0]-1] = 1
+            if threeofakind(Hands[every[0] - 1], DealerCards) == True:
+                card_combo[every[0] - 1] = 3
+            elif isitatwopair(Hands[every[0]-1], DealerCards) >= 2:
+                card_combo[every[0] - 1] = 2
+            elif isitatwopair(Hands[every[0]-1], DealerCards) < 2:
+                card_combo[every[0]-1] = 1
         else:
             card_combo[every[0]-1] = [0,high_card(Hands[every[0]-1], DealerCards)]
 
 print(card_combo)
 
-if card_combo.count(1) == 0:
+if card_combo.count(1) == 0 and card_combo.count(2) == 0 and card_combo.count(3) == 0:
     highest = 0
     for i in range(len(card_combo)):
         print(i)
@@ -611,15 +666,57 @@ if card_combo.count(1) == 0:
         if len(card_combo[i]) > 1:
             if card_combo[i][1] == highest:
                 round_winner = pAtt[i][0] #ermittlung welchem Spieler dieser höchste wert gehört
-elif card_combo.count(1) == 1:
+
+elif card_combo.count(1) == 1 and card_combo.count(2) == 0 and card_combo.count(3) == 0:
     for i in range(len(card_combo)):
         if card_combo[i] == 1:
             round_winner = pAtt[i][0]
-elif card_combo.count(1) >= 2:
+elif card_combo.count(2) == 1 and card_combo.count(3) == 0:
+    for i in range(len(card_combo)):
+        if card_combo[i] == 2:
+            round_winner = pAtt[i][0]
+elif card_combo.count(3) == 1:
+    for i in range(len(card_combo)):
+        if card_combo[i] == 3:
+            round_winner = pAtt[i][0]
+
+elif card_combo.count(1) >= 2 and card_combo.count(2) == 0 and card_combo.count(3) == 0:
     for i in range(len(card_combo)):
         if card_combo[i] == 1:
             card_combo[i] = [0,high_card(Hands[i], DealerCards)]
         elif card_combo[i] != 1:
+            card_combo[i] = []
+    highest = 0
+    print(card_combo)
+    for i in range(len(card_combo)):
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] > highest:
+                highest = card_combo[i][1]
+    for i in range(len(card_combo)):
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] == highest:
+                round_winner = pAtt[i][0]
+elif card_combo.count(2) >= 2 and card_combo.count(3) == 0:
+    for i in range(len(card_combo)):
+        if card_combo[i] == 2:
+            card_combo[i] = [0,high_card(Hands[i], DealerCards)]
+        elif card_combo[i] != 2:
+            card_combo[i] = []
+    highest = 0
+    print(card_combo)
+    for i in range(len(card_combo)):
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] > highest:
+                highest = card_combo[i][1]
+    for i in range(len(card_combo)):
+        if len(card_combo[i]) > 1:
+            if card_combo[i][1] == highest:
+                round_winner = pAtt[i][0]
+elif card_combo.count(3) >= 2:
+    for i in range(len(card_combo)):
+        if card_combo[i] == 3:
+            card_combo[i] = [0,high_card(Hands[i], DealerCards)]
+        elif card_combo[i] != 3:
             card_combo[i] = []
     highest = 0
     print(card_combo)
