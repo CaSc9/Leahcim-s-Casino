@@ -2,10 +2,11 @@ import os
 
 
 class Config(object):
+    SECRET_KEY = os.environ.get('FLASK_SECRET_KEY')
     DEBUG = False
     TESTING = False
-    SECRET_KEY = os.environ.get('SECRET')
     SESSION_COOKIE_SECURE = True
+
 
 
 class ProductionConfig(Config):
@@ -13,12 +14,14 @@ class ProductionConfig(Config):
 
 
 class DevelopmentConfig(Config):
+    DATABASE_URI = "development.db"
     DEBUG = True
     TESTING = True
     SESSION_COOKIE_SECURE = False
 
 
 class TestingConfig(Config):
+    DATABASE_URI = 'test.db'
     DEBUG = True
     TESTING = True
     SESSION_COOKIE_SECURE = False
